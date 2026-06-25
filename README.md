@@ -45,7 +45,7 @@ A few things to know:
 
 Pick mode `2` at the start. Colors are still assigned randomly, so the AI might end up white or black either way.
 
-The AI uses minimax search with alpha-beta pruning, looking 5 moves ahead by default (`AI_DEPTH` at the top of `checkers.py`, change it if you want it weaker/stronger — depth 6-7 is still nearly instant, depth 8+ starts noticeably slowing down).
+The AI uses minimax search with alpha-beta pruning, looking 8 moves ahead by default (`AI_DEPTH` at the top of `checkers.py`, change it if you want it weaker/stronger — depth until 10 is nearly instant, depth 10+ starts noticeably slowing down).
 
 It evaluates positions by material: regular pieces are worth 1 point, kings 3. It respects the same mandatory-capture and multi-jump rules as a human player — when it has a forced capture chain available, the whole chain is decided and played as one turn, not one jump at a time.
 
