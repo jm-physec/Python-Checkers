@@ -1,8 +1,8 @@
 # Python-checkers
 
-Checkers game for two players in the terminal. I made this as a programming exercise — it's pretty bare bones but fully playable.
+A two-player checkers game that runs in the terminal. I built this as a programming exercise. It's not fancy but it works — full rules, mandatory captures, multi-jumps, and king promotion.
 
-No external libraries, just Python 3.
+Pure Python. No installs needed for the base game (pytest is only needed if you want to run the tests).
 
 ## Running it
 
@@ -10,11 +10,17 @@ No external libraries, just Python 3.
 python checkers.py
 ```
 
-That's it.
+Python 3.8 or higher.
 
-## How it works
+At the start you choose the mode:
 
-Board is 8x8, pieces only move on dark squares. White goes first.
+```
+Choose mode: [1] Human vs Human  [2] Human vs AI
+```
+
+## Controls
+
+Moves are entered as row + column: select your piece first (e.g. `6A`), then the destination (e.g. `5B`).
 
 ```
    A B C D E F G H
@@ -28,30 +34,47 @@ Board is 8x8, pieces only move on dark squares. White goes first.
 8  w . w . w . w .
 ```
 
-White is `w`, black is `b`. When a piece gets crowned it turns uppercase (`W` or `B`).
+White uses `w`, black uses `b`. Kings are uppercase (`W`, `B`).
 
-You type moves as row + column, like `6A` to select a piece and `5B` to move it there.
+A few things to know:
+- Captures are mandatory. If you can take a piece, you have to.
+- Multi-jumps work — after a capture, if the same piece can keep jumping, it does.
+- Kings move all four diagonal directions (one square at a time, I kept it simple).
 
-Captures are mandatory, if you can take a piece you have to. Multijumps work too, the game will keep asking for destinations as long as the same piece can keep capturing.
+## Playing against the AI
 
-Kings can move in all four diagonal directions (one square at a time, I kept it simple, maybe I will modify that in v2 if it comes).
+Pick mode `2` at the start. Colors are still assigned randomly, so the AI might end up white or black either way.
 
-## Commands
+The AI uses minimax search with alpha-beta pruning, looking 5 moves ahead by default (`AI_DEPTH` at the top of `checkers.py`, change it if you want it weaker/stronger — depth 6-7 is still nearly instant, depth 8+ starts noticeably slowing down).
 
-Type these at any point instead of a cell:
+It evaluates positions by material: regular pieces are worth 1 point, kings 3. It respects the same mandatory-capture and multi-jump rules as a human player — when it has a forced capture chain available, the whole chain is decided and played as one turn, not one jump at a time.
+
+The search logic lives in `ai.py`, separate from the game engine in `checkers.py`.
+
+## In-game commands
+
+Type these instead of a cell at any prompt:
 
 - `!end` — quit
-- `!changename` or `!cn` — change your name (max 2 times per game)
-- `!changechar` or `!cc` — change your piece symbol (max 2 times)
-- `!hi` — easter egg :)
+- `!changename` or `!cn` — change your display name (up to twice)
+- `!changechar` or `!cc` — change your piece symbol (up to twice)
+- `!hi` — does nothing useful, just a greeting
 
-## What I might add later
+## What's missing
 
-- AI opponent (minimax probably, but that's a bigger project)
-- Multi-jump is already in, but mandatory multi-capture chains could be stricter
-- Maybe colors in the terminal? Looked complicated for now.
-- Modify Kings moves to be like the classic game (all squares you want, not only one like now)
+Kings here only move one square, not the unlimited range they have in standard checkers. I skipped that to keep the move logic simpler — the AI inherits this simplification too, since it shares the same move-generation code. The AI also doesn't have an opening book or any positional heuristics beyond material count, so its early game is fairly generic; it gets noticeably sharper once captures start happening.
 
-## Requirements
+If you find a bug, open an issue.
 
-Just Python 3.8+, nothing to install.
+## Running the tests
+
+```
+pip install -r requirements-dev.txt
+pytest tests/ -v
+```
+
+45 tests covering the game engine and the AI's move generation/search. Runs automatically on every push via GitHub Actions.
+
+## License
+
+MIT
