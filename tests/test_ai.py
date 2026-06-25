@@ -5,9 +5,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from ai import (
     evaluate,
-    get_legal_turns,
+    legal_turns,
     choose_turn,
-    get_forced_moves,
 )
 
 
@@ -47,7 +46,7 @@ def test_evaluate_kings_worth_more_than_regular_pieces():
 def test_get_legal_turns_returns_simple_moves_when_no_capture():
     board = empty_board()
     board[4][4] = "w"
-    turns = get_legal_turns(board, "w")
+    turns = legal_turns(board, "w")
     # two diagonal moves available, no captures forced
     assert len(turns) == 2
     for turn in turns:
@@ -59,7 +58,7 @@ def test_get_legal_turns_forces_capture_when_available():
     board = empty_board()
     board[4][4] = "w"
     board[3][3] = "b"
-    turns = get_legal_turns(board, "w")
+    turns = legal_turns(board, "w")
     # only the capturing move should be offered, not the other diagonal
     assert len(turns) == 1
     assert turns[0][0][2] is True
@@ -70,14 +69,14 @@ def test_get_legal_turns_includes_multi_jump_chain():
     board[6][2] = "w"
     board[5][3] = "b"
     board[3][3] = "b"
-    turns = get_legal_turns(board, "w")
+    turns = legal_turns(board, "w")
     # at least one turn should have 2 steps (a double jump)
     assert any(len(t) == 2 for t in turns)
 
 
 def test_get_legal_turns_empty_when_no_pieces():
     board = empty_board()
-    assert get_legal_turns(board, "w") == []
+    assert legal_turns(board, "w") == []
 
 
 # --- choose_turn ---

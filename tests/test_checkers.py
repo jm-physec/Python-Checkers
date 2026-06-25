@@ -6,14 +6,14 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from checkers import (
     valid_name,
     cell_to_coord,
-    create_initial_board,
+    create_board,
     forward_directions,
     possible_moves,
     capture_moves_from,
     has_legal_move,
     has_captures,
     apply_move,
-    process_command,
+    commands,
 )
 
 
@@ -68,7 +68,7 @@ def test_cell_to_coord_rejects_invalid_column():
 # --- create_initial_board ---
 
 def test_initial_board_has_12_pieces_per_side():
-    board = create_initial_board()
+    board = create_board()
     whites = sum(row.count("w") for row in board)
     blacks = sum(row.count("b") for row in board)
     assert whites == 12
@@ -76,7 +76,7 @@ def test_initial_board_has_12_pieces_per_side():
 
 
 def test_initial_board_pieces_only_on_dark_squares():
-    board = create_initial_board()
+    board = create_board()
     for r in range(8):
         for c in range(8):
             if board[r][c] != ".":
@@ -101,7 +101,7 @@ def test_king_moves_both_directions():
 # --- possible_moves ---
 
 def test_possible_moves_empty_cell_returns_nothing():
-    board = create_initial_board()
+    board = create_board()
     assert possible_moves(board, 3, 3, "w") == []
 
 
@@ -226,20 +226,20 @@ def test_apply_move_does_not_crash_on_existing_king():
 
 def test_process_command_end_returns_end():
     player_data = {"name_changes": 0, "char_changes": 0, "char": "w", "opponent_char": "b"}
-    assert process_command("!end", player_data) == "END"
+    assert commands("!end", player_data) == "END"
 
 
 def test_process_command_unknown_text_returns_none():
     player_data = {"name_changes": 0, "char_changes": 0, "char": "w", "opponent_char": "b"}
-    assert process_command("6A", player_data) is None
+    assert commands("6A", player_data) is None
 
 
 def test_process_command_hi_returns_ok():
     player_data = {"name_changes": 0, "char_changes": 0, "char": "w", "opponent_char": "b"}
-    assert process_command("!hi", player_data) == "OK"
+    assert commands("!hi", player_data) == "OK"
 
 
 def test_process_command_changename_blocked_after_limit():
     player_data = {"name_changes": 2, "char_changes": 0, "char": "w", "opponent_char": "b"}
-    assert process_command("!cn", player_data) == "OK"
+    assert commands("!cn", player_data) == "OK"
     assert player_data["name_changes"] == 2
